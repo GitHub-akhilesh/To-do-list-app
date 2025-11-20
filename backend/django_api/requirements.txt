@@ -1,0 +1,11 @@
+Django>=4.2
+djangorestframework>=3.14.0
+psycopg2-binary
+fastapi
+uvicorn
+Flask
+aiokafka
+pika
+pymongo
+mysql-connector-python
+drf-yasg

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-django-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-django-api
+  template:
+    metadata:
+      labels:
+        app: todo-django-api
+    spec:
+      containers:
+      - name: django-api
+        image: your-dockerhub-username/todo-django-api:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: POSTGRES_HOST
+          value: "postgres"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-django-api
+spec:
+  selector:
+    app: todo-django-api
+  ports:
+  - port: 8000
+    targetPort: 8000

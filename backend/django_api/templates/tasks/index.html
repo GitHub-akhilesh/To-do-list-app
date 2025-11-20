@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Todo Platform - Django Templates</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
+        .app { max-width: 800px; margin: 2rem auto; background: #fff; padding: 1.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        h1 { margin-top: 0; }
+        .task-list { margin-top: 1rem; }
+        .task { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee; }
+        .task:last-child { border-bottom: none; }
+        .badge { padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.75rem; }
+        .badge.pending { background: #fff3cd; }
+        .badge.done { background: #d1e7dd; }
+        form { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        input, textarea, select { padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc; flex: 1 1 150px; }
+        button { padding: 0.5rem 1rem; border-radius: 999px; border: none; cursor: pointer; }
+        button.primary { background: #2563eb; color: white; }
+        button.danger { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <h1>Todo List (Django Template + API)</h1>
+    <form id="task-form">
+        <input type="text" id="title" placeholder="Task title" required />
+        <input type="datetime-local" id="due_date" />
+        <select id="status">
+            <option value="pending">Pending</option>
+            <option value="done">Done</option>
+        </select>
+        <textarea id="description" placeholder="Description"></textarea>
+        <button type="submit" class="primary">Add Task</button>
+    </form>
+    <div class="task-list" id="task-list"></div>
+</div>
+<script>
+    const apiBase = "/api/tasks/";
+
+    async function fetchTasks() {
+        const res = await fetch(apiBase);
+        const data = await res.json();
+        const container = document.getElementById("task-list");
+        container.innerHTML = "";
+        data.forEach(t => {
+            const div = document.createElement("div");
+            div.className = "task";
+            div.innerHTML = `
+                <div>
+                    <strong>${t.title}</strong><br/>
+                    <small>${t.description || ""}</small><br/>
+                    <small>Due: ${t.due_date || "N/A"}</small>
+                </div>
+                <div>
+                    <span class="badge ${t.status}">${t.status}</span><br/>
+                    <button class="danger" onclick="deleteTask(${t.id})">Delete</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    async function deleteTask(id) {
+        await fetch(apiBase + id + "/", { method: "DELETE" });
+        fetchTasks();
+    }
+
+    document.getElementById("task-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const payload = {
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            due_date: document.getElementById("due_date").value || null,
+            status: document.getElementById("status").value,
+        };
+        await fetch(apiBase, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+        e.target.reset();
+        fetchTasks();
+    });
+
+    fetchTasks();
+</script>
+</body>
+</html>

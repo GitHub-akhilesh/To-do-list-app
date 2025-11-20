@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: todo_user
+      POSTGRES_PASSWORD: todo_pass
+    ports:
+      - "5432:5432"
+
+  django_api:
+    build:
+      context: ../backend/django_api
+      dockerfile: Dockerfile
+    command: sh -c "python manage.py shell -c 'from tasks.db import init_db; init_db()' && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: todo_user
+      POSTGRES_PASSWORD: todo_pass
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    volumes:
+      - ../backend/django_api:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+
+  notification_service:
+    build:
+      context: ../backend/notification_service_fastapi
+      dockerfile: Dockerfile
+    command: uvicorn main:app --host 0.0.0.0 --port 9000
+    ports:
+      - "9000:9000"
+
+  web-react:
+    build:
+      context: ../frontend/web-react
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - django_api
