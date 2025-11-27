@@ -48,16 +48,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": os.environ.get("POSTGRES_DB", "todo_db"),
+#         "USER": os.environ.get("POSTGRES_USER", "todo_user"),
+#         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "todo_pass"),
+#         "HOST": os.environ.get("POSTGRES_HOST", "postgres"),
+#         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "todo_db"),
-        "USER": os.environ.get("POSTGRES_USER", "todo_user"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "todo_pass"),
-        "HOST": os.environ.get("POSTGRES_HOST", "postgres"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "ENGINE":  "mysql.connector.django",
+        "NAME": os.environ.get("MYSQL_DB", "todo_db"),
+        "USER": os.environ.get("MYSQL_USER", "root"),
+        "PASSWORD": os.environ.get("MYSQL_PASSWORD", "root@123"),
+        "HOST": os.environ.get("MYSQL_HOST", "localhost"),
+        "PORT": os.environ.get("MYSQL_PORT", "3306"),
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = []
 

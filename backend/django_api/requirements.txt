@@ -9,3 +9,4 @@ pika
 pymongo
 mysql-connector-python
 drf-yasg
+
