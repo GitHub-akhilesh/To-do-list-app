@@ -76,7 +76,6 @@ if (-not (Test-Path $activateScript)) {
 Write-Host "[2/4] Activating virtual environment..." -ForegroundColor Cyan
 & $activateScript
 
-
 # ================================
 # 3) Install dependencies
 # ================================
@@ -84,13 +83,11 @@ Write-Host "`nInstalling Python dependencies into the venv (.venv)..." -Foregrou
 pip install --upgrade pip
 pip install -r (Join-Path $PSScriptRoot "requirements.txt")
 
-
 # ================================
 # 4) Initialize DB table (raw SQL)
 # ================================
 Write-Host "`nInitializing tasks table (init_db) in MySQL..." -ForegroundColor Cyan
 python manage.py shell -c "from tasks.db import init_db; init_db()"
-
 
 # ================================
 # 5) Run Django server
